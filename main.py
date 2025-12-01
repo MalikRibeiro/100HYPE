@@ -59,15 +59,19 @@ def job():
         notifier = Notifier()
         subject = f"Relatório Financeiro Diário - {datetime.now().strftime('%d/%m/%Y')}"
         
-        # Send Email
-        notifier.send_email(subject, markdown_report, attachment_path=pdf_filename)
+        # Prepare context for Email Template
+        email_context = {
+            'date': datetime.now().strftime('%d/%m/%Y'),
+            'total_value': total_value,
+            'indicators': indicators,
+            'ai_analysis': ai_analysis,
+            'suggestions': suggestions_df,
+            'contribution': contribution_df
+        }
         
-        # Send WhatsApp (Summary)
-        whatsapp_msg = f"*Relatório Financeiro {datetime.now().strftime('%d/%m')}*\n\n"
-        whatsapp_msg += f"💰 Valor Total: R$ {total_value:,.2f}\n"
-        whatsapp_msg += f"📊 Selic: {indicators.get('selic_meta', 0)}% | CDI: {indicators.get('cdi', 0):.2f}%\n\n"
-        whatsapp_msg += "Verifique seu e-mail para o relatório completo."
-        notifier.send_whatsapp(whatsapp_msg)
+        # Send Email
+        notifier.send_email(subject, email_context, attachment_path=pdf_filename)
+        
         
         logger.info("Job completed successfully.")
         

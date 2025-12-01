@@ -18,6 +18,7 @@ env/
 data/*.mp4
 data/*.avi
 data/
+!data/portfolio.json
 
 # Ignora todos os arquivos na pasta reports
 reports/

@@ -1,28 +1,34 @@
 import yfinance as yf
 import pandas as pd
-import requests
-from datetime import datetime
+import json
 import logging
+from datetime import datetime
+from bcb import sgs, currency
 from config.settings import Settings
 
 logger = logging.getLogger(__name__)
 
 class DataCollector:
     def __init__(self):
-        self.tickers = []
-        for category, items in Settings.ASSETS.items():
-            self.tickers.extend(items)
+        self.portfolio_data = self._load_portfolio()
+        self.tickers = [item['ticker'] for item in self.portfolio_data]
         # Add USD/BRL explicitly if not in list
         if "BRL=X" not in self.tickers:
             self.tickers.append("BRL=X")
+
+    def _load_portfolio(self):
+        """Loads portfolio data from JSON file."""
+        try:
+            with open('data/portfolio.json', 'r') as f:
+                return json.load(f)
+        except Exception as e:
+            logger.error(f"Failed to load portfolio.json: {e}")
+            return []
 
     def get_market_data(self):
         """Fetches prices, variations, and fundamentals for all assets."""
         logger.info("Fetching market data for tickers: %s", self.tickers)
         results = {}
-        
-        # Fetch data one by one to ensure we get 'info' for fundamentals
-        # Bulk download is faster for prices but doesn't give 'info'
         
         for ticker in self.tickers:
             try:
@@ -39,7 +45,8 @@ class DataCollector:
                         "change_1d": 0.0,
                         "change_12m": 0.0,
                         "dy_12m": 0.0,
-                        "p_vp": 0.0
+                        "p_vp": 0.0,
+                        "name": ticker
                     }
                     continue
 
@@ -60,7 +67,6 @@ class DataCollector:
                     change_12m = 0.0
 
                 # Fundamentals
-                # Note: yfinance info is sometimes slow or incomplete
                 try:
                     info = stock.info
                     dy = info.get('dividendYield', 0)
@@ -69,10 +75,13 @@ class DataCollector:
                     
                     p_vp = info.get('priceToBook', 0)
                     if p_vp is None: p_vp = 0
+                    
+                    name = info.get('shortName', ticker)
                 except Exception as e:
                     logger.warning(f"Could not fetch info for {ticker}: {e}")
                     dy = 0
                     p_vp = 0
+                    name = ticker
 
                 results[ticker] = {
                     "price": current_price,
@@ -80,67 +89,57 @@ class DataCollector:
                     "change_12m": change_12m,
                     "dy_12m": dy,
                     "p_vp": p_vp,
-                    "name": info.get('shortName', ticker)
+                    "name": name
                 }
                 
             except Exception as e:
                 logger.error(f"Error fetching data for {ticker}: {e}")
                 results[ticker] = {
-                    "price": 0.0, "change_1d": 0.0, "change_12m": 0.0, "dy_12m": 0.0, "p_vp": 0.0
+                    "price": 0.0, "change_1d": 0.0, "change_12m": 0.0, "dy_12m": 0.0, "p_vp": 0.0, "name": ticker
                 }
 
         return results
 
     def get_economic_indicators(self):
-        """Fetches Selic, CDI, and PTAX from BCB API."""
+        """Fetches Selic, CDI, and PTAX using python-bcb."""
         indicators = {}
-        today = datetime.now().strftime("%d/%m/%Y")
         
-        # BCB API Endpoints
-        # Selic Meta (432)
         try:
-            url_selic = "https://api.bcb.gov.br/dados/serie/bcdata.sgs.432/dados/ultimos/1?formato=json"
-            r_selic = requests.get(url_selic, timeout=10)
-            if r_selic.status_code == 200:
-                indicators['selic_meta'] = float(r_selic.json()[0]['valor'])
-            else:
-                indicators['selic_meta'] = 0.0
+            # Selic Meta (432)
+            selic_series = sgs.get({'selic': 432}, last=1)
+            indicators['selic_meta'] = float(selic_series['selic'].iloc[-1])
         except Exception as e:
-            logger.error(f"Error fetching Selic: {e}")
+            logger.error(f"Error fetching Selic via BCB: {e}")
             indicators['selic_meta'] = 0.0
 
-        # CDI (12) - Daily rate, usually very small. 
-        # For "CDI do dia", users usually mean the annualized rate or the daily factor.
-        # Let's fetch the accumulated CDI (4389) or just use Selic as proxy if needed.
-        # Actually, let's fetch the daily rate (12) and annualized it roughly or just show it.
-        # Better: Fetch CDI Annualized (Accumulated in month/year is harder).
-        # Let's stick to Selic Meta as the main benchmark.
-        # Or try to get CDI from another source if needed.
-        # For now, I'll use Selic Meta as the main "CDI" proxy if CDI API fails or is confusing.
-        indicators['cdi'] = indicators['selic_meta'] - 0.10 # Approximation
-
-        # PTAX (USD)
-        # https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao='MM-DD-YYYY'
-        # This API requires exact date and valid business day. It's flaky for "today" if run before closing.
-        # I will use yfinance 'BRL=X' as the primary source for USD price in the market data section.
-        # But for "PTAX Oficial", I'll try the API.
         try:
-            # Try to get PTAX from the last available day
-            url_ptax = "https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarPeriodo(dataInicial=@dataInicial,dataFinalCotacao=@dataFinalCotacao)?@dataInicial='{}'&@dataFinalCotacao='{}'&$top=1&$orderby=dataHoraCotacao%20desc&$format=json".format(
-                (datetime.now() - pd.Timedelta(days=5)).strftime('%m-%d-%Y'),
-                datetime.now().strftime('%m-%d-%Y')
-            )
-            r_ptax = requests.get(url_ptax, timeout=10)
-            if r_ptax.status_code == 200:
-                data = r_ptax.json()
-                if 'value' in data and len(data['value']) > 0:
-                    indicators['ptax_venda'] = data['value'][0]['cotacaoVenda']
-                else:
-                    indicators['ptax_venda'] = 0.0
+            # CDI (12) - Taxa DI % a.a. (4389 is accumulated, 12 is daily rate annualized usually)
+            # Using 4389 (CDI acumulado no mês) or 12 (CDI % a.d.)?
+            # Usually users want the annualized rate. Series 432 is Selic Meta % a.a.
+            # Series 1178 is Selic Over % a.a.
+            # Series 4389 is CDI accumulated in the month.
+            # Let's use 12 (CDI % a.d.) and convert or find the annualized one.
+            # Actually, Series 432 is the target.
+            # Let's use Selic as proxy for CDI if we can't find the exact annualized CDI series easily, 
+            # but usually CDI follows Selic Over.
+            # Let's try to fetch CDI annualized directly if possible, or just use Selic - 0.10.
+            # For now, let's stick to Selic Meta as the main indicator.
+            indicators['cdi'] = indicators['selic_meta'] - 0.10
+        except Exception:
+            indicators['cdi'] = 0.0
+
+        try:
+            # PTAX (USD)
+            # python-bcb has a currency module
+            ptax = currency.get('USD', start_date=datetime.now().strftime('%Y-%m-%d'), end_date=datetime.now().strftime('%Y-%m-%d'))
+            if not ptax.empty:
+                indicators['ptax_venda'] = ptax['USD'].iloc[-1]
             else:
-                indicators['ptax_venda'] = 0.0
+                # Try yesterday if today is empty (weekend/holiday)
+                last_ptax = currency.get('USD', last=1)
+                indicators['ptax_venda'] = last_ptax['USD'].iloc[-1]
         except Exception as e:
-            logger.error(f"Error fetching PTAX: {e}")
+            logger.error(f"Error fetching PTAX via BCB: {e}")
             indicators['ptax_venda'] = 0.0
 
         return indicators

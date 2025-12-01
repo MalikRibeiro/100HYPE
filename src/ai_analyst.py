@@ -33,23 +33,28 @@ class AIAnalyst:
         portfolio_summary = portfolio_df.to_dict(orient='records')
         
         # Create a simplified summary to save tokens and focus attention
+        # Create a simplified summary to save tokens and focus attention
         summary_text = f"Valor Total: R$ {total_value:,.2f}\n"
         summary_text += f"Indicadores: Selic {indicators.get('selic_meta')}% | CDI {indicators.get('cdi')}% | PTAX {indicators.get('ptax_venda')}\n"
         summary_text += "Ativos:\n"
         for item in portfolio_summary:
-            summary_text += f"- {item['ticker']} ({item['category']}): R$ {item['value_brl']:.2f} ({item['allocation']:.1f}%)\n"
+            pl_pct = item.get('profit_loss_pct', 0.0)
+            pl_val = item.get('profit_loss_val', 0.0)
+            summary_text += f"- {item['ticker']} ({item['category']}): R$ {item['value_brl']:.2f} ({item['allocation']:.1f}%) | L/P: {pl_pct:.2f}% (R$ {pl_val:.2f})\n"
 
         system_prompt = """
-        Você é um analista financeiro extremamente rigoroso, crítico e orientado à verdade.
-        Sua função é avaliar o desempenho da carteira do investidor diariamente.
-        Você deve questionar suposições, apontar pontos cegos e destacar riscos.
-        Fale de forma direta, madura e sem buscar agradar.
+        Você é um consultor Wealth Management de alta performance. Analise a carteira com base nos dados fornecidos:
+
+        Rentabilidade Real: Compare o preço atual com o preço médio (PM). Quais ativos estão carregando a carteira e quais estão drenando?
+        
+        Rebalanceamento Inteligente: Considerando o aporte de R$ 250,00, não sugira apenas comprar o que está "para trás", mas valide se o ativo não perdeu seus fundamentos (ex: HCTR11 caiu muito, vale a pena aportar ou é uma faca caindo?).
+        
+        Consistência: Aponte se a concentração em um único ativo (ex: BBAS3) aumentou ou diminuiu em relação à diversificação ideal.
+        
         Regras:
-        1. Não use valores históricos manuais, analise o snapshot atual fornecido.
-        2. Resumo Geral obrigatório: Valor total, peso por classe, ganhos/perdas.
-        3. Aponte riscos: Exposição concentrada, sensibilidade ao ciclo econômico.
-        4. Insights: "Oportunidades para estudar", "Alertas reais".
-        5. Nunca elogie a carteira. Seja um analista crítico, não um torcedor.
+        1. Seja direto e executivo.
+        2. Use os dados de L/P (Lucro/Prejuízo) fornecidos para embasar sua análise.
+        3. Não invente dados.
         """
 
         full_prompt = f"{system_prompt}\n\nDados da Carteira:\n{summary_text}"

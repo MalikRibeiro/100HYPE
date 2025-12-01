@@ -10,12 +10,6 @@ class Settings:
     EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
     EMAIL_RECEIVER = os.getenv("EMAIL_RECEIVER")
 
-    # WhatsApp (Credenciais carregadas do .env)
-    TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
-    TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
-    TWILIO_FROM_NUMBER = os.getenv("TWILIO_FROM_NUMBER")
-    WHATSAPP_TO_NUMBER = os.getenv("WHATSAPP_TO_NUMBER")
-
     # IA (Gemini)
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 

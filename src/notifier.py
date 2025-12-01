@@ -6,14 +6,17 @@ from config.settings import Settings
 import logging
 import os
 import markdown
+from jinja2 import Environment, FileSystemLoader
 
 logger = logging.getLogger(__name__)
 
 class Notifier:
     def __init__(self):
-        pass
+        self.template_dir = 'templates'
+        os.makedirs(self.template_dir, exist_ok=True)
+        self.env = Environment(loader=FileSystemLoader(self.template_dir))
 
-    def send_email(self, subject, body_markdown, attachment_path=None):
+    def send_email(self, subject, context, attachment_path=None):
         if not Settings.EMAIL_SENDER or not Settings.EMAIL_PASSWORD:
             logger.warning("Email credentials not set. Skipping email.")
             return
@@ -23,24 +26,49 @@ class Notifier:
         msg['To'] = Settings.EMAIL_RECEIVER
         msg['Subject'] = subject
 
-        # Convert Markdown to HTML
-        html_content = markdown.markdown(body_markdown, extensions=['tables'])
-        
-        # Add some basic CSS for tables
-        css = """
-        <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-            table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
-            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-            th { background-color: #f2f2f2; font-weight: bold; }
-            tr:nth-child(even) { background-color: #f9f9f9; }
-            h1, h2 { color: #2c3e50; }
-        </style>
-        """
-        
-        full_html = f"<html><head>{css}</head><body>{html_content}</body></html>"
+        try:
+            template = self.env.get_template('email_template.html')
+            
+            # Format numbers for display
+            formatted_context = context.copy()
+            formatted_context['total_value'] = f"{context['total_value']:,.2f}"
+            
+            # Convert AI markdown to HTML
+            if 'ai_analysis' in formatted_context and formatted_context['ai_analysis']:
+                 formatted_context['ai_analysis'] = markdown.markdown(formatted_context['ai_analysis'])
+            
+            # Format suggestions list
+            suggestions_list = []
+            for _, row in context['suggestions'].iterrows():
+                suggestions_list.append({
+                    'category': row['category'],
+                    'current_pct': f"{row['current_pct']:.1f}",
+                    'target_pct': f"{row['target_pct']:.1f}",
+                    'status': row['status']
+                })
+            formatted_context['suggestions'] = suggestions_list
+            
+            # Format contribution
+            if isinstance(context['contribution'], str):
+                formatted_context['contribution_is_str'] = True
+                formatted_context['contribution'] = context['contribution']
+            else:
+                formatted_context['contribution_is_str'] = False
+                contribution_list = []
+                for _, row in context['contribution'].iterrows():
+                    contribution_list.append({
+                        'category': row['category'],
+                        'contribution': f"{row['contribution']:,.2f}"
+                    })
+                formatted_context['contribution'] = contribution_list
 
-        msg.attach(MIMEText(full_html, 'html')) 
+            html_content = template.render(formatted_context)
+            msg.attach(MIMEText(html_content, 'html'))
+            
+        except Exception as e:
+            logger.error(f"Error rendering email template: {e}")
+            # Fallback to simple text if template fails
+            msg.attach(MIMEText("Erro ao gerar relatório HTML. Verifique os logs.", 'plain'))
 
         if attachment_path and os.path.exists(attachment_path):
             with open(attachment_path, "rb") as f:
@@ -59,28 +87,3 @@ class Notifier:
         except Exception as e:
             logger.error(f"Failed to send email: {e}")
 
-    def send_whatsapp(self, message):
-        # Twilio Implementation
-        if Settings.TWILIO_ACCOUNT_SID and Settings.TWILIO_AUTH_TOKEN:
-            try:
-                from twilio.rest import Client
-                client = Client(Settings.TWILIO_ACCOUNT_SID, Settings.TWILIO_AUTH_TOKEN)
-                
-                # Twilio WhatsApp usually requires "whatsapp:" prefix
-                from_number = f"whatsapp:{Settings.TWILIO_FROM_NUMBER}" if not Settings.TWILIO_FROM_NUMBER.startswith("whatsapp:") else Settings.TWILIO_FROM_NUMBER
-                to_number = f"whatsapp:{Settings.WHATSAPP_TO_NUMBER}" if not Settings.WHATSAPP_TO_NUMBER.startswith("whatsapp:") else Settings.WHATSAPP_TO_NUMBER
-                
-                # Split message if too long (Twilio limit is 1600 chars usually)
-                if len(message) > 1600:
-                    message = message[:1500] + "\n... (truncated)"
-                
-                msg = client.messages.create(
-                    body=message,
-                    from_=from_number,
-                    to=to_number
-                )
-                logger.info(f"WhatsApp sent: {msg.sid}")
-            except Exception as e:
-                logger.error(f"Failed to send WhatsApp via Twilio: {e}")
-        else:
-            logger.info("Twilio credentials not set. Skipping WhatsApp.")
