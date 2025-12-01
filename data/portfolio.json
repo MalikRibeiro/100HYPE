@@ -1,0 +1,110 @@
+[
+    {
+        "ticker": "BBAS3.SA",
+        "qty": 37,
+        "avg_price": 24.74,
+        "category": "BR_STOCKS"
+    },
+    {
+        "ticker": "SAPR3.SA",
+        "qty": 5,
+        "avg_price": 5.82,
+        "category": "BR_STOCKS"
+    },
+    {
+        "ticker": "SAPR4.SA",
+        "qty": 2,
+        "avg_price": 5.83,
+        "category": "BR_STOCKS"
+    },
+    {
+        "ticker": "LWSA3.SA",
+        "qty": 1,
+        "avg_price": 3.76,
+        "category": "BR_STOCKS"
+    },
+    {
+        "ticker": "XPML11.SA",
+        "qty": 3,
+        "avg_price": 104.32,
+        "category": "FIIS"
+    },
+    {
+        "ticker": "KFOF11.SA",
+        "qty": 3,
+        "avg_price": 82.80,
+        "category": "FIIS"
+    },
+    {
+        "ticker": "RBRR11.SA",
+        "qty": 2,
+        "avg_price": 84.42,
+        "category": "FIIS"
+    },
+    {
+        "ticker": "HCTR11.SA",
+        "qty": 7,
+        "avg_price": 20.61,
+        "category": "FIIS"
+    },
+    {
+        "ticker": "IRDM11.SA",
+        "qty": 2,
+        "avg_price": 69.17,
+        "category": "FIIS"
+    },
+    {
+        "ticker": "VINO11.SA",
+        "qty": 2,
+        "avg_price": 5.12,
+        "category": "FIIS"
+    },
+    {
+        "ticker": "B5P211.SA",
+        "qty": 2,
+        "avg_price": 90.52,
+        "category": "ETFS"
+    },
+    {
+        "ticker": "PACB11.SA",
+        "qty": 12,
+        "avg_price": 9.83,
+        "category": "ETFS"
+    },
+    {
+        "ticker": "FIXA11.SA",
+        "qty": 5,
+        "avg_price": 16.18,
+        "category": "ETFS"
+    },
+    {
+        "ticker": "GOLD11.SA",
+        "qty": 3,
+        "avg_price": 19.82,
+        "category": "ETFS"
+    },
+    {
+        "ticker": "XINA11.SA",
+        "qty": 1,
+        "avg_price": 7.51,
+        "category": "ETFS"
+    },
+    {
+        "ticker": "O",
+        "qty": 0.93,
+        "avg_price": 55.76,
+        "category": "US_REITS"
+    },
+    {
+        "ticker": "HPQ",
+        "qty": 1.82931885,
+        "avg_price": 28.94,
+        "category": "US_STOCKS"
+    },
+    {
+        "ticker": "USDT-USD",
+        "qty": 37.94885362,
+        "avg_price": 5.36,
+        "category": "CRYPTO"
+    }
+]

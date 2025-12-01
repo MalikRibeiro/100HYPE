@@ -122,20 +122,19 @@ class DataCollector:
 
         try:
             # PTAX (USD)
-            # python-bcb has a currency module
-            # Fix: use 'start' and 'end' instead of 'start_date' and 'end_date'
-            today_str = datetime.now().strftime('%Y-%m-%d')
-            ptax = currency.get('USD', start=today_str, end=today_str)
+            from datetime import timedelta # Certifique-se de importar timedelta no topo ou aqui
+            
+            today = datetime.now()
+            start_date = (today - timedelta(days=5)).strftime('%Y-%m-%d')
+            end_date = today.strftime('%Y-%m-%d')
+            
+            # Pega o intervalo dos últimos 5 dias para garantir que pegue o último dia útil
+            ptax = currency.get('USD', start=start_date, end=end_date)
             
             if not ptax.empty:
                 indicators['ptax_venda'] = ptax['USD'].iloc[-1]
             else:
-                # Try yesterday if today is empty (weekend/holiday)
-                last_ptax = currency.get('USD', last=1)
-                if not last_ptax.empty:
-                    indicators['ptax_venda'] = last_ptax['USD'].iloc[-1]
-                else:
-                    indicators['ptax_venda'] = 0.0
+                indicators['ptax_venda'] = 0.0
         except Exception as e:
             logger.error(f"Error fetching PTAX via BCB: {e}")
             indicators['ptax_venda'] = 0.0

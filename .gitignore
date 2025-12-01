@@ -16,7 +16,6 @@ env/
 
 # --- Arquivos do Projeto (Específicos) ---
 # Ignora os vídeos gravados (são pesados e contêm dados sensíveis)
-data/
 !data/portfolio.json
 !data/history.json
 !data/rdb_state.json

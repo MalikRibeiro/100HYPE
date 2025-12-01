@@ -60,7 +60,7 @@ def job():
             'ai_analysis': ai_analysis,
             'suggestions': suggestions_df,
             'contribution': contribution_df,
-            'allocation_chart': chart_base64
+            'allocation_chart': chart_b64
         }
         
         # Send Email
