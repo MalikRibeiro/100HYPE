@@ -1,0 +1,32 @@
+name: Relatório Diário Invest-AI
+
+on:
+  schedule:
+    # 13:00 BRT é 16:00 UTC (ajuste conforme horário de verão)
+    - cron: '0 16 * * 1-5' # Roda às 16:00 UTC (13:00 BRT) de Seg a Sex
+  workflow_dispatch: # Permite rodar manualmente clicando num botão
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v3
+
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Instalar dependências
+        run: |
+          pip install -r requirements.txt
+
+      - name: Executar Robô
+        env:
+          EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          EMAIL_RECEIVER: ${{ secrets.EMAIL_RECEIVER }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          LOG_LEVEL: INFO
+        run: python main.py --test
