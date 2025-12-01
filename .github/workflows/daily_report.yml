@@ -1,0 +1,45 @@
+name: Relatório Diário Invest-AI
+
+on:
+  schedule:
+    - cron: '0 16 * * 1-5' # 13:00 Horário de Brasília (ajuste se necessário)
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    # Permissões para o robô poder salvar (commit) as alterações no histórico
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v3
+
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Instalar dependências
+        run: |
+          pip install -r requirements.txt
+
+      - name: Executar Robô
+        env:
+          EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          EMAIL_RECEIVER: ${{ secrets.EMAIL_RECEIVER }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          LOG_LEVEL: INFO
+        run: python main.py --test
+
+      # --- NOVO PASSO: SALVAR HISTÓRICO ---
+      - name: Salvar Histórico e Estado
+        run: |
+          git config --global user.name 'Invest-AI Bot'
+          git config --global user.email 'bot@invest-ai.com'
+          git add data/history.json data/rdb_state.json
+          # Só faz commit se houver mudanças
+          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Atualizando histórico diário" && git push)
