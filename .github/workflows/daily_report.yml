@@ -37,7 +37,7 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           # A URL da planilha está no settings.py, mas se quiser pode por aqui também
           LOG_LEVEL: INFO
-        run: python main.py
+        run: python main.py --test
 
       - name: Salvar Histórico (Commit & Push)
         run: |
