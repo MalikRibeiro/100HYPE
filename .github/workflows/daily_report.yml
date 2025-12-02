@@ -2,14 +2,15 @@ name: Relatório Diário Invest-AI
 
 on:
   schedule:
-    - cron: '0 16 * * 1-5' # 13:00 Horário de Brasília (ajuste se necessário)
-  workflow_dispatch:
+    # 22:00 UTC equivale a 19:00 no Brasil (Horário Padrão)
+    - cron: '0 22 * * 1-5'
+  workflow_dispatch: # Botão para rodar manualmente
 
 jobs:
-  build:
+  run-invest-ai:
     runs-on: ubuntu-latest
     
-    # Permissões para o robô poder salvar (commit) as alterações no histórico
+    # Permissões necessárias para salvar o histórico.json
     permissions:
       contents: write
 
@@ -17,7 +18,7 @@ jobs:
       - name: Checkout do código
         uses: actions/checkout@v3
 
-      - name: Configurar Python
+      - name: Configurar Python 3.12
         uses: actions/setup-python@v4
         with:
           python-version: '3.12'
@@ -25,6 +26,8 @@ jobs:
       - name: Instalar dependências
         run: |
           pip install -r requirements.txt
+          # Instala dependências extras que podem faltar no ambiente limpo
+          pip install requests requests-cache lxml
 
       - name: Executar Robô
         env:
@@ -32,14 +35,17 @@ jobs:
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
           EMAIL_RECEIVER: ${{ secrets.EMAIL_RECEIVER }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          # A URL da planilha está no settings.py, mas se quiser pode por aqui também
           LOG_LEVEL: INFO
-        run: python main.py --test
+        run: python main.py
 
-      # --- NOVO PASSO: SALVAR HISTÓRICO ---
-      - name: Salvar Histórico e Estado
+      - name: Salvar Histórico (Commit & Push)
         run: |
           git config --global user.name 'Invest-AI Bot'
           git config --global user.email 'bot@invest-ai.com'
-          git add data/history.json data/rdb_state.json
-          # Só faz commit se houver mudanças
-          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Atualizando histórico diário" && git push)
+          
+          # Adiciona arquivos de dados modificados
+          git add data/history.json
+          
+          # Commit e Push apenas se houver mudanças
+          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Update: Histórico Financeiro" && git push)
