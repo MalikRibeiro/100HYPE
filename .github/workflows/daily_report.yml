@@ -2,18 +2,15 @@ name: Relatório Diário Invest-AI
 
 on:
   schedule:
-    # Cron em UTC. 22:00 UTC = 19:00 Brasília (Horário Padrão)
-    # Se quiser testar, mude para um horário próximo ou use o botão manual.
-    - cron: '0 22 * * 1-5' 
-  
-  # Permite rodar manualmente na aba "Actions" do GitHub para testes
-  workflow_dispatch:
+    # 22:00 UTC equivale a 19:00 no Brasil (Horário Padrão)
+    - cron: '0 22 * * 1-5'
+  workflow_dispatch: # Botão para rodar manualmente
 
 jobs:
   run-invest-ai:
     runs-on: ubuntu-latest
     
-    # PERMISSÃO CRÍTICA: Permite que o robô salve o histórico.json de volta no repositório
+    # Permissões necessárias para salvar o histórico.json
     permissions:
       contents: write
 
@@ -29,27 +26,26 @@ jobs:
       - name: Instalar dependências
         run: |
           pip install -r requirements.txt
+          # Instala dependências extras que podem faltar no ambiente limpo
+          pip install requests requests-cache lxml
 
-      - name: Executar Robô Invest-AI
+      - name: Executar Robô
         env:
-          # Mapeando os Segredos configurados no GitHub
           EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
           EMAIL_RECEIVER: ${{ secrets.EMAIL_RECEIVER }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          # A URL da planilha está no settings.py, mas se quiser pode por aqui também
           LOG_LEVEL: INFO
-          # A URL da Planilha já está no settings.py, não precisa de segredo se for pública/csv
         run: python main.py
 
       - name: Salvar Histórico (Commit & Push)
         run: |
-          # Configura o usuário do Git simulado
           git config --global user.name 'Invest-AI Bot'
           git config --global user.email 'bot@invest-ai.com'
           
-          # Adiciona apenas os arquivos de dados que queremos preservar
+          # Adiciona arquivos de dados modificados
           git add data/history.json
           
-          # Verifica se houve mudança. Se sim, faz commit e push.
-          # Se não houver mudança (ex: feriado/bolsa fechada), não faz nada e não dá erro.
-          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Update: Histórico Financeiro Diário" && git push)
+          # Commit e Push apenas se houver mudanças
+          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Update: Histórico Financeiro" && git push)
