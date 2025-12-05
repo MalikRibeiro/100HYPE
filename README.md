@@ -1,4 +1,4 @@
-# Invest-AI 2.0
+# Invest-AI 3.0 - Versão Online
 
 ### Seu Gestor de Portfólio Inteligente na Nuvem
 
