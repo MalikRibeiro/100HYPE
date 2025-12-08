@@ -10,7 +10,7 @@ echo.
 :: 1. Iniciar o Backend (API)
 echo [1/2] Iniciando o Backend (FastAPI)...
 echo --------------------------------------------------------
-start "Invest-AI Backend API" cmd /k "cd invest-ai-backend && uvicorn app.main:app --reload"
+start "Invest-AI Backend API" cmd /k "cd backend && uvicorn app.main:app --reload"
 
 :: Pequena pausa para garantir que a API suba antes do frontend tentar conectar
 timeout /t 5 /nobreak >nul

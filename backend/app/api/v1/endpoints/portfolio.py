@@ -24,7 +24,8 @@ def create_asset(
 ):
     asset = db.query(Asset).filter(Asset.ticker == asset_in.ticker).first()
     if asset:
-        raise HTTPException(status_code=400, detail="Asset already exists")
+        return asset
+
     asset = Asset(
         ticker=asset_in.ticker,
         category=asset_in.category,
