@@ -20,7 +20,11 @@ class Settings(BaseSettings):
     EMAIL_RECEIVER: Optional[str] = None  # <--- Adicionado
     
     # Configurações Gerais
-    LOG_LEVEL: str = "INFO"  # <--- Adicionado
+    LOG_LEVEL: str = "INFO"
+
+    # Google OAuth
+    GOOGLE_CLIENT_ID: Optional[str] = None
+    GOOGLE_CLIENT_SECRET: Optional[str] = None
 
     class Config:
         env_file = ".env"

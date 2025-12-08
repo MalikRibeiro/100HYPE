@@ -13,4 +13,9 @@ python-multipart
 streamlit
 requests
 pandas
-plotly
+authlib
+httpx
+itsdangerous
+jinja2
+markdown
+pytest

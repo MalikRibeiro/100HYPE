@@ -1,132 +1,115 @@
-# Invest-AI 3.0 - Versão Online
+# 🚀 Invest-AI 2.0
 
-### Seu Gestor de Portfólio Inteligente na Nuvem
+> **Seu Gestor de Portfólio Inteligente com IA Generativa**
 
-![GitHub Workflow
-Status](https://img.shields.io/github/actions/workflow/status/SEU_USUARIO/Invest-AI/daily_report.yml)
-![Python Version](https://img.shields.io/badge/python-3.12%2B-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
+![Python](https://img.shields.io/badge/Python-3.12+-blue.svg)
+![FastAPI](https://img.shields.io/badge/Backend-FastAPI-green.svg)
+![Streamlit](https://img.shields.io/badge/Frontend-Streamlit-red.svg)
+![Database](https://img.shields.io/badge/Database-PostgreSQL%20(Supabase)-336791.svg)
+![AI](https://img.shields.io/badge/AI-Gemini%20Pro-orange.svg)
 
-O **Invest-AI 2.0** é um sistema autônomo de análise e gestão de
-portfólio que combina automação financeira, dados em tempo real e
-Inteligência Artificial (Google Gemini). Ele gera relatórios diários
-inteligentes, com fundamentos, notícias, rebalanceamento e recomendações
-de aporte.
+O **Invest-AI 2.0** é uma plataforma SaaS (Software as a Service) projetada para democratizar a gestão de investimentos. Diferente de planilhas estáticas, o Invest-AI utiliza Inteligência Artificial para analisar sua carteira, entender o contexto macroeconômico e fornecer recomendações personalizadas de rebalanceamento e aporte.
 
-------------------------------------------------------------------------
+---
 
-## Principais Recursos
+## 🏗️ Arquitetura do Sistema
 
-### Gestão via Google Sheets
+O projeto evoluiu de um script local para uma arquitetura moderna **Cliente-Servidor**:
 
-Altere sua carteira editando uma planilha simples. O sistema lê tudo
-automaticamente.
+1.  **Backend (API Restful):**
+    * Construído com **FastAPI**.
+    * Gerencia usuários, autenticação (JWT) e segurança (Argon2).
+    * Conecta com **PostgreSQL (Supabase)** para persistência de dados.
+    * Integração com **Google Gemini** para geração de análises financeiras.
+    * Sistema de disparo de e-mails automáticos (`EmailService`).
 
-### IA Analyst (Gemini Pro)
+2.  **Frontend (Web Dashboard):**
+    * Construído com **Streamlit** para rápida visualização de dados.
+    * Consome a API para login, cadastro de ativos e visualização de gráficos interativos (**Plotly**).
 
-Analisa fundamentos, explica quedas, identifica riscos e contextualiza o
-cenário macroeconômico.
+---
 
-### Contexto de Mercado
+## ✨ Funcionalidades Atuais
 
-Coleta automática das principais notícias financeiras do dia.
+* 🔐 **Autenticação Segura:** Cadastro e Login de usuários com criptografia.
+* 📊 **Dashboard Interativo:** Visualização clara do patrimônio, alocação e quantidade de ativos.
+* ➕ **Gestão de Carteira:** Cadastro manual de ativos (Ações, FIIs, Stocks, Cripto).
+* 🤖 **Analista IA:** Geração de relatórios fundamentalistas e macroeconômicos da sua carteira com um clique.
+* 📧 **Notificações:** Envio automático da análise da IA diretamente para o e-mail do usuário.
 
-### Dados em Tempo Real
+---
 
--   Yahoo Finance (cotações e indicadores)\
--   Banco Central (Selic, CDI, PTAX)
+## 🔮 Visão de Futuro (Roadmap)
 
-### Sugestão de Aporte
+Estamos trabalhando para transformar o Invest-AI em um ecossistema completo:
 
-Algoritmo determina onde investir para manter as metas de alocação.
+* [ ] **App Mobile Nativo (Android/Kotlin):** Um aplicativo dedicado para gestão na palma da mão.
+* [ ] **Integração B3/Yahoo Finance:** Atualização automática de preços em tempo real (Workers em background).
+* [ ] **Múltiplas Carteiras:** Suporte para diferentes objetivos (Aposentadoria, Viagem, etc).
+* [ ] **Modo "Copiloto":** Chat interativo com a IA para tirar dúvidas sobre investimentos específicos.
 
-### Relatório Diário
+---
 
-Enviado em HTML com patrimônio, variação, gráficos, análise da IA e
-rebalanceamento.
+## 🚀 Como Executar o Projeto
 
-### Automação Total
+### Pré-requisitos
+* Python 3.12+
+* Conta no Supabase (Banco de Dados)
+* Chave de API do Google Gemini
+* Senha de App do Gmail (para envio de e-mails)
 
-Executa sozinho via GitHub Actions às 13:00 (horário de Brasília).
+### Instalação
 
-------------------------------------------------------------------------
+1.  **Clone o repositório:**
+    ```bash
+    git clone [https://github.com/SEU_USUARIO/Invest-AI.git](https://github.com/SEU_USUARIO/Invest-AI.git)
+    cd Invest-AI
+    ```
 
-## Configuração da Carteira (Google Sheets)
+2.  **Configure o Ambiente:**
+    Crie um arquivo `.env` na pasta `invest-ai-backend` com as credenciais:
+    ```env
+    DATABASE_URL=postgresql://user:pass@host:port/db
+    GEMINI_API_KEY=sua_chave_gemini
+    EMAIL_SENDER=seu_email@gmail.com
+    EMAIL_PASSWORD=sua_senha_de_app
+    ```
 
-  Ticker       Quantidade   Categoria    Meta
-  ------------ ------------ ------------ ------
-  BBAS3.SA     100          BR_STOCKS    10%
-  HCTR11.SA    50           FIIS         5%
-  IVVB11.SA    20           ETFS         15%
-  AAPL         5            US_STOCKS    5%
-  O            10           US_REITS     5%
-  USDT-USD     50.5         CRYPTO       2%
-  RDB-NUBANK   2150.55      RENDA_FIXA   35%
+3.  **Instale as Dependências:**
+    ```bash
+    cd invest-ai-backend
+    pip install -r requirements.txt
+    ```
 
-------------------------------------------------------------------------
+### Execução Automática (Windows)
 
-## Instalação Local
+Basta dar dois cliques no arquivo **`run_app.bat`** na raiz do projeto.
+Ele iniciará automaticamente a API e abrirá o Dashboard no seu navegador.
 
-### Requisitos
+### Execução Manual
 
-Python 3.12+, Conta Google, Gmail com senha de app.
-
-### 1. Clonar e instalar
-
-``` bash
-git clone https://github.com/SEU_USUARIO/Invest-AI.git
-cd Invest-AI
-pip install -r requirements.txt
+**Terminal 1 (Backend):**
+```bash
+cd invest-ai-backend
+uvicorn app.main:app --reload
 ```
 
-### 2. Criar `.env`
+Terminal 2 (Frontend):
 
-    EMAIL_SENDER=...
-    EMAIL_PASSWORD=...
-    EMAIL_RECEIVER=...
-    GEMINI_API_KEY=...
-    LOG_LEVEL=INFO
+```bash
 
-### 3. Rodar
+streamlit run frontend/app.py
+```
+### Execução Automatica (Windows)
 
-``` bash
-python main.py
+```bash
+.\run_app.bat
 ```
 
-------------------------------------------------------------------------
+### Execução Docker
+```bash
+docker-compose up --build
+```
 
-## Automação via GitHub Actions
-
-Secrets necessários:
-
--   EMAIL_SENDER\
--   EMAIL_PASSWORD\
--   EMAIL_RECEIVER\
--   GEMINI_API_KEY
-
-Workflow: `.github/workflows/daily_report.yml`\
-Executa dias úteis às 16:00 UTC.
-
-------------------------------------------------------------------------
-
-## Estrutura do Projeto
-
-    .
-    ├── main.py
-    ├── config/
-    ├── src/
-    ├── data/
-    └── .github/workflows/
-
-------------------------------------------------------------------------
-
-## Segurança
-
-Nunca faça commit do `.env`.\
-A planilha publicada deve conter apenas dados de carteira.
-
-------------------------------------------------------------------------
-
-## Licença
-
-Projeto sob licença MIT.
+📄 Licença
+Projeto desenvolvido para fins educacionais e de gestão pessoal.

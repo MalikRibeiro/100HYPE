@@ -6,9 +6,16 @@ import plotly.express as px
 from datetime import datetime
 
 # Configuração
-API_URL = "http://127.0.0.1:8000/api/v1"
+API_URL = "http://localhost:8000/api/v1"
 
 st.set_page_config(page_title="Invest-AI", page_icon="📈", layout="wide")
+
+# Check for token in URL query params (OAuth callback)
+# Check for token in URL query params (OAuth callback)
+if "token" in st.query_params:
+    st.session_state.token = st.query_params["token"]
+    st.query_params.clear()
+    st.rerun()
 
 def local_css(file_name):
     with open(file_name) as f:
@@ -20,43 +27,55 @@ try:
 except FileNotFoundError:
     pass # Should be in frontend folder relative to run command, usually project root if running streamlit run frontend/app.py
 
+# --- API Helper ---
+def make_api_request(method, url, **kwargs):
+    try:
+        if method == "POST":
+            response = requests.post(url, **kwargs)
+        elif method == "GET":
+            response = requests.get(url, **kwargs)
+        else:
+            return None
+        return response
+    except requests.exceptions.ConnectionError:
+        st.error("⚠️ O servidor parece estar offline. Verifique sua conexão ou se o backend está rodando.")
+        return None
+    except Exception as e:
+        st.error(f"Erro de conexão: {e}")
+        return None
+
 # --- Funções de API ---
 def login(email, password):
-    try:
-        response = requests.post(f"{API_URL}/auth/access-token", data={"username": email, "password": password})
-        if response.status_code == 200:
-            return response.json()
-        return None
-    except:
-        return None
+    response = make_api_request("POST", f"{API_URL}/auth/access-token", data={"username": email, "password": password})
+    if response and response.status_code == 200:
+        return response.json()
+    return None
 
 def signup(email, password, full_name):
     """Realiza cadastro de usuário"""
-    try:
-        payload = {"email": email, "password": password, "full_name": full_name}
-        response = requests.post(f"{API_URL}/auth/signup", json=payload)
-        
+    payload = {"email": email, "password": password, "full_name": full_name}
+    response = make_api_request("POST", f"{API_URL}/auth/signup", json=payload)
+    
+    if response:
         if response.status_code == 200:
             return True, "Cadastro realizado com sucesso! Faça login."
         else:
             detail = response.json().get('detail', 'Erro desconhecido')
             return False, f"Erro: {detail}"
-    except Exception as e:
-        return False, f"Erro de conexão: {e}"
+    return False, "Falha na conexão"
 
 def get_portfolio(token):
     headers = {"Authorization": f"Bearer {token}"}
-    try:
-        response = requests.get(f"{API_URL}/portfolio/portfolio", headers=headers)
+    response = make_api_request("GET", f"{API_URL}/portfolio/portfolio", headers=headers)
+    
+    if response:
         if response.status_code == 200:
             return response.json()
         elif response.status_code == 401:
             st.error("Sessão expirada. Faça login novamente.")
             st.session_state.token = None
             st.rerun()
-        return []
-    except:
-        return []
+    return []
 
 def create_transaction_flow(token, ticker, category, type_, qty, price):
     headers = {"Authorization": f"Bearer {token}"}
@@ -126,6 +145,18 @@ if not st.session_state.token:
                         st.rerun()
                     else:
                         st.error("Credenciais inválidas")
+            
+            st.divider()
+            st.markdown(f'''
+                <div style="text-align: center;">
+                    <a href="{API_URL}/auth/google/login" target="_self" style="text-decoration: none;">
+                        <button style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; background-color: #fff; color: #333; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                            <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" width="20px">
+                            Entrar com Google
+                        </button>
+                    </a>
+                </div>
+            ''', unsafe_allow_html=True)
         
         with tab_signup:
             with st.container():
