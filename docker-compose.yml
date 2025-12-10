@@ -15,11 +15,7 @@ services:
     build: ./frontend
     container_name: invest-ai-frontend
     ports:
-      - "8501:8501"
-    environment:
-      - API_URL=http://backend:8000/api/v1
-    volumes:
-      - ./frontend:/app
+      - "3000:80"
     depends_on:
       - backend
     networks:

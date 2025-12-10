@@ -12,6 +12,7 @@ router = APIRouter()
 
 @router.post("/generate")
 def generate_portfolio_analysis(
+    language: str = "pt",
     db: Session = Depends(deps.get_db),
     current_user: User = Depends(deps.get_current_user)
 ):
@@ -52,7 +53,9 @@ def generate_portfolio_analysis(
 
     # 2. Generate AI Analysis
     ai_service = AIAnalystService()
-    analysis_text = ai_service.generate_analysis(portfolio_data)
+    # Normalize language code (e.g. pt-BR -> pt)
+    lang_code = language.lower().split('-')[0]
+    analysis_text = ai_service.generate_analysis(portfolio_data, language=lang_code)
 
     # 3. Save to DB
     analysis = AIAnalysis(user_id=current_user.id, content=analysis_text)

@@ -1,0 +1,42 @@
+{
+    "common": {
+        "loading": "Carregando...",
+        "error": "Erro",
+        "success": "Sucesso",
+        "save": "Salvar",
+        "cancel": "Cancelar",
+        "logout": "Sair"
+    },
+    "auth": {
+        "login": "Entrar",
+        "register": "Cadastrar",
+        "email": "E-mail",
+        "password": "Senha",
+        "confirmPassword": "Confirmar Senha",
+        "name": "Nome",
+        "loginButton": "Entrar",
+        "googleLogin": "Entrar com Google",
+        "registerButton": "Criar Conta",
+        "noAccount": "Não tem uma conta?",
+        "hasAccount": "Já tem uma conta?",
+        "welcomeBack": "Bem-vindo de volta",
+        "createAccount": "Crie sua conta",
+        "enterDetails": "Insira seus dados abaixo"
+    },
+    "dashboard": {
+        "title": "Meu Portfólio",
+        "overview": "Visão Geral",
+        "transactions": "Transações",
+        "addTransaction": "Nova Transação",
+        "generateAnalysis": "Gerar Análise IA",
+        "analyzing": "Gerando Análise...",
+        "analysisTitle": "Análise de Portfólio IA",
+        "totalValue": "Valor Total",
+        "topAsset": "Maior Ativo",
+        "recentTransactions": "Transações Recentes"
+    },
+    "analysis": {
+        "error": "Erro ao gerar análise.",
+        "quotaExceeded": "Cota da IA excedida. Por favor aguarde."
+    }
+}

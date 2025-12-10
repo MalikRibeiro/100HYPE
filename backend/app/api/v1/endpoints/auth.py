@@ -117,6 +117,7 @@ async def auth_google_callback(request: Request, db: Session = Depends(deps.get_
     )
     
     # Redirect to Frontend with token
-    # Assuming Frontend is at localhost:8501
-    frontend_url = f"http://localhost:8501/?token={access_token}"
+    # Redirect to localhost:5173 (Vite default) or 3000 (Docker)
+    # Ideally should use an env var for FRONTEND_URL
+    frontend_url = f"http://localhost:5173/auth/callback?token={access_token}"
     return RedirectResponse(url=frontend_url)
