@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getPortfolio, generateAnalysis } from '@/services/api';
-import { Card, CardHeader, CardContent, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, Legend } from 'recharts';
@@ -19,7 +19,7 @@ export default function Dashboard() {
     const [analyzing, setAnalyzing] = useState(false);
     const [analysis, setAnalysis] = useState('');
 
-    const { data: portfolio = [], isLoading, isError } = useQuery({
+    const { data: portfolio = [], isLoading } = useQuery({
         queryKey: ['portfolio'],
         queryFn: async () => {
             try {
@@ -41,7 +41,7 @@ export default function Dashboard() {
             const res = await generateAnalysis(i18n.language);
             // Assuming res structure. Adjust if API returns plain text or dict
             setAnalysis(res.content || res.message || JSON.stringify(res));
-        } catch (e) {
+        } catch (e: any) {
             console.error(e);
             const errorMsg = e.response?.data?.message || e.message || '';
             if (errorMsg.includes('429')) {
@@ -129,7 +129,7 @@ export default function Dashboard() {
                                         paddingAngle={5}
                                         dataKey="value"
                                     >
-                                        {chartData.map((entry: any, index: number) => (
+                                        {chartData.map((_entry: any, index: number) => (
                                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                         ))}
                                     </Pie>

@@ -110,6 +110,3 @@ streamlit run frontend/app.py
 ```bash
 docker-compose up --build
 ```
-
-📄 Licença
-Projeto desenvolvido para fins educacionais e de gestão pessoal.

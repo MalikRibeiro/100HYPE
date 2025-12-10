@@ -12,7 +12,7 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
-export const login = async (username, password) => {
+export const login = async (username: string, password: string) => {
     const form = new FormData();
     form.append('username', username);
     form.append('password', password);
@@ -20,7 +20,7 @@ export const login = async (username, password) => {
     return response.data;
 };
 
-export const register = async (data) => {
+export const register = async (data: any) => {
     const response = await api.post('/auth/signup', data);
     return response.data;
 };
@@ -30,17 +30,17 @@ export const getPortfolio = async () => {
     return response.data;
 };
 
-export const createAsset = async (asset) => {
+export const createAsset = async (asset: any) => {
     const response = await api.post('/portfolio/assets', asset);
     return response.data;
 };
 
-export const createTransaction = async (tx) => {
+export const createTransaction = async (tx: any) => {
     const response = await api.post('/portfolio/transactions', tx);
     return response.data;
 };
 
-export const generateAnalysis = async (language = 'pt') => {
+export const generateAnalysis = async (language: string = 'pt') => {
     const response = await api.post(`/analysis/generate?language=${language}`);
     return response.data;
 };
