@@ -1,0 +1,42 @@
+{
+    "common": {
+        "loading": "Loading...",
+        "error": "Error",
+        "success": "Success",
+        "save": "Save",
+        "cancel": "Cancel",
+        "logout": "Logout"
+    },
+    "auth": {
+        "login": "Login",
+        "register": "Register",
+        "email": "Email",
+        "password": "Password",
+        "confirmPassword": "Confirm Password",
+        "name": "Name",
+        "loginButton": "Sign In",
+        "googleLogin": "Login with Google",
+        "registerButton": "Create Account",
+        "noAccount": "Don't have an account?",
+        "hasAccount": "Already have an account?",
+        "welcomeBack": "Welcome back",
+        "createAccount": "Create an account",
+        "enterDetails": "Enter your details below"
+    },
+    "dashboard": {
+        "title": "My Portfolio",
+        "overview": "Overview",
+        "transactions": "Transactions",
+        "addTransaction": "Add Transaction",
+        "generateAnalysis": "Generate Analysis",
+        "analyzing": "Generating Analysis...",
+        "analysisTitle": "AI Portfolio Analysis",
+        "totalValue": "Total Value",
+        "topAsset": "Top Asset",
+        "recentTransactions": "Recent Transactions"
+    },
+    "analysis": {
+        "error": "Error generating analysis.",
+        "quotaExceeded": "AI Quota exceeded. Please wait a moment."
+    }
+}
