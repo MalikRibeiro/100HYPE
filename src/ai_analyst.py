@@ -9,6 +9,7 @@ class AIAnalyst:
     def __init__(self):
         self.api_key = Settings.GEMINI_API_KEY
         self.models_to_try = ['gemini-1.5-pro', 'gemini-1.5-flash'] 
+        # Primary model is 'gemini-1.5-pro', fallback to 'gemini-1.5-flash' if needed.
     
         if self.api_key:
             genai.configure(api_key=self.api_key)
