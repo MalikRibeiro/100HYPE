@@ -1,0 +1,35 @@
+name: CI - Quality Check
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend # Importante!
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+        
+    - name: Install Dependencies
+      run: |
+        pip install -r requirements.txt
+        pip install pytest httpx # Garante ferramentas de teste
+        
+    - name: Run Tests
+      # Cria um .env fake para os testes não falharem por falta de config
+      run: |
+        echo "DATABASE_URL=sqlite:///./test.db" > .env
+        echo "SECRET_KEY=testing_key_123" >> .env
+        echo "GEMINI_API_KEY=fake_key" >> .env
+        pytest
