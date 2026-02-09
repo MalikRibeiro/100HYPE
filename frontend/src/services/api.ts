@@ -1,7 +1,11 @@
 import axios from 'axios';
 
+// O Vite expõe variáveis de ambiente via import.meta.env
+const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL,
+  baseURL: baseURL,
+  withCredentials: true, // Importante para cookies/sessão
 });
 
 api.interceptors.request.use((config) => {

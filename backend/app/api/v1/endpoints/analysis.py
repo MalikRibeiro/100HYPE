@@ -64,6 +64,6 @@ def generate_portfolio_analysis(
     db.refresh(analysis)
 
     # 4. Email
-    EmailService.send_email(current_user.email, "Sua Análise de Portfólio - Invest-AI", analysis_text)
+    EmailService.send_email(current_user.email, "Sua Análise de Portfólio - 100HYPE", analysis_text)
 
     return {"content": analysis_text}

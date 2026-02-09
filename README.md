@@ -1,4 +1,4 @@
-# 🚀 Invest-AI 2.0
+# 🚀 100HYPE
 
 > **Seu Gestor de Portfólio Inteligente com IA Generativa**
 
@@ -8,7 +8,7 @@
 ![Database](https://img.shields.io/badge/Database-PostgreSQL%20(Supabase)-336791.svg)
 ![AI](https://img.shields.io/badge/AI-Gemini%20Pro-orange.svg)
 
-O **Invest-AI 2.0** é uma plataforma SaaS (Software as a Service) projetada para democratizar a gestão de investimentos. Diferente de planilhas estáticas, o Invest-AI utiliza Inteligência Artificial para analisar sua carteira, entender o contexto macroeconômico e fornecer recomendações personalizadas de rebalanceamento e aporte.
+O **100HYPE** é uma plataforma SaaS (Software as a Service) projetada para democratizar a gestão de investimentos. Diferente de planilhas estáticas, o 100HYPE utiliza Inteligência Artificial para analisar sua carteira, entender o contexto macroeconômico e fornecer recomendações personalizadas de rebalanceamento e aporte.
 
 ---
 
@@ -41,7 +41,7 @@ O projeto evoluiu de um script local para uma arquitetura moderna **Cliente-Serv
 
 ## 🔮 Visão de Futuro (Roadmap)
 
-Estamos trabalhando para transformar o Invest-AI em um ecossistema completo:
+Estamos trabalhando para transformar o 100HYPE em um ecossistema completo:
 
 * [ ] **App Mobile Nativo (Android/Kotlin):** Um aplicativo dedicado para gestão na palma da mão.
 * [ ] **Integração B3/Yahoo Finance:** Atualização automática de preços em tempo real (Workers em background).
@@ -62,12 +62,12 @@ Estamos trabalhando para transformar o Invest-AI em um ecossistema completo:
 
 1.  **Clone o repositório:**
     ```bash
-    git clone [https://github.com/SEU_USUARIO/Invest-AI.git](https://github.com/SEU_USUARIO/Invest-AI.git)
-    cd Invest-AI
+    git clone https://github.com/SEU_USUARIO/100HYPE.git
+    cd 100HYPE
     ```
 
 2.  **Configure o Ambiente:**
-    Crie um arquivo `.env` na pasta `invest-ai-backend` com as credenciais:
+    Crie um arquivo `.env` na pasta `backend` com as credenciais:
     ```env
     DATABASE_URL=postgresql://user:pass@host:port/db
     GEMINI_API_KEY=sua_chave_gemini
@@ -77,7 +77,7 @@ Estamos trabalhando para transformar o Invest-AI em um ecossistema completo:
 
 3.  **Instale as Dependências:**
     ```bash
-    cd invest-ai-backend
+    cd backend
     pip install -r requirements.txt
     ```
 
@@ -90,7 +90,7 @@ Ele iniciará automaticamente a API e abrirá o Dashboard no seu navegador.
 
 **Terminal 1 (Backend):**
 ```bash
-cd invest-ai-backend
+cd backend
 uvicorn app.main:app --reload
 ```
 

@@ -1,7 +1,7 @@
 services:
   backend:
     build: ./backend
-    container_name: invest-ai-backend
+    container_name: 100hype-backend
     ports:
       - "8000:8000"
     env_file:
@@ -9,18 +9,18 @@ services:
     volumes:
       - ./backend:/app
     networks:
-      - invest-ai-net
+      - 100hype-net
 
   frontend:
     build: ./frontend
-    container_name: invest-ai-frontend
+    container_name: 100hype-frontend
     ports:
       - "3000:80"
     depends_on:
       - backend
     networks:
-      - invest-ai-net
+      - 100hype-net
 
 networks:
-  invest-ai-net:
+  100hype-net:
     driver: bridge

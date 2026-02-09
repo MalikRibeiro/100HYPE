@@ -112,3 +112,21 @@ class AIAnalystService:
              if "429" in str(e):
                  return "AI Quota exceeded. Please wait 1 minute." if language == 'en' else "Cota de IA excedida. Por favor, aguarde 1 minuto e tente novamente."
              return "Unable to generate analysis at the moment." if language == 'en' else "Não foi possível gerar a análise no momento."
+
+# Adicione um parametro 'persona' na função de gerar análise
+async def generate_portfolio_analysis(data: dict, persona: str = "standard"):
+    
+    prompts = {
+        "kid": "Explique a situação financeira abaixo como se eu fosse uma criança de 5 anos. Use metáforas simples (cofrinho, mesada), seja engraçado, use emojis e evite jargões técnicos.",
+        "buffett": "Aja como Warren Buffett. Seja extremamente técnico, focado em 'value investing', dividendos, longo prazo e fundamentos. Seja direto e use terminologia financeira avançada.",
+        "standard": "Aja como um consultor financeiro profissional."
+    }
+    
+    selected_instruction = prompts.get(persona, prompts["standard"])
+    
+    final_prompt = f"""
+    {selected_instruction}
+    
+    Analise os seguintes dados de investimento:
+    {data}
+    """
