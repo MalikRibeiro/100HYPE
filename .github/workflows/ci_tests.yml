@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./backend # Importante!
+        working-directory: ./backend
 
     steps:
     - uses: actions/checkout@v3
@@ -27,9 +27,9 @@ jobs:
         pip install pytest httpx # Garante ferramentas de teste
         
     - name: Run Tests
-      # Cria um .env fake para os testes não falharem por falta de config
       run: |
         echo "DATABASE_URL=sqlite:///./test.db" > .env
         echo "SECRET_KEY=testing_key_123" >> .env
         echo "GEMINI_API_KEY=fake_key" >> .env
+        export PYTHONPATH=$PYTHONPATH:.
         pytest
