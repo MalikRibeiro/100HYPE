@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings
-from typing import Optional
+from typing import Optional, List, Union
+from pydantic import AnyHttpUrl, field_validator
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "100HYPE API"
