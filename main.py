@@ -12,8 +12,7 @@ from src.news_collector import NewsCollector
 from src.sheets_manager import SheetsManager
 from fastapi.middleware.proxy_headers import ProxyHeadersMiddleware
 
-app = FastAPI()
-app.add_middleware(ProxyHeadersMiddleware, trusted_hosts="*")
+import logging
 
 # Configure Logging
 os.makedirs("logs", exist_ok=True)
@@ -26,6 +25,15 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger(__name__)
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+logger.info("🚀 Starting FastAPI application...")
+logger.info(f"CORS Origins: {settings.BACKEND_CORS_ORIGINS}")
+logger.info(f"OAuth Configured: {bool(settings.GOOGLE_CLIENT_ID)}")
+
+app = FastAPI()
+app.add_middleware(ProxyHeadersMiddleware, trusted_hosts="*")
 
 def job():
     logger.info("Starting daily financial report job...")
