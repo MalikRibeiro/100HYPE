@@ -71,7 +71,7 @@ def login_access_token(
 @router.get("/google/login")
 async def login_google(request: Request):
     # Important: Ensure the callback URL matches what is registered in Google Cloud Console
-    redirect_uri = request.url_for('auth_google_callback')
+    redirect_uri = f"{settings.BACKEND_URL}/api/v1/auth/google/callback"
     return await oauth.google.authorize_redirect(request, redirect_uri)
 
 @router.get("/google/callback")

@@ -10,6 +10,10 @@ from src.notifier import Notifier
 from src.ai_analyst import AIAnalyst
 from src.news_collector import NewsCollector
 from src.sheets_manager import SheetsManager
+from fastapi.middleware.proxy_headers import ProxyHeadersMiddleware
+
+app = FastAPI()
+app.add_middleware(ProxyHeadersMiddleware, trusted_hosts="*")
 
 # Configure Logging
 os.makedirs("logs", exist_ok=True)
