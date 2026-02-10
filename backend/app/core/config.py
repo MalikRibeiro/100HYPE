@@ -29,6 +29,8 @@ class Settings(BaseSettings):
 
     FRONTEND_URL: str = "http://localhost:5173"
 
+    BACKEND_URL: str
+
     BACKEND_CORS_ORIGINS: Union[List[str], str] = []
 
     @field_validator("BACKEND_CORS_ORIGINS", mode="before")
